@@ -1,19 +1,17 @@
 import streamlit as st
-import openai_chat as gpt
+import openai_chat as conecta_gpt
 import json
 import os
-import re
-from unidecode import unidecode
 import os
 import pickle
-from cachetools import cached, LRUCache
+from cachetools import cached
 from cachetools.keys import hashkey
+from app.models.tratamentos import Tratamentos
 
 
-PATH_CONFIGS = os.getcwd() + '/database/'
+PATH_CONFIGS = os.getcwd() + 'app/database/'
 if not os.path.exists(PATH_CONFIGS):
     os.mkdir(PATH_CONFIGS)
-
 def custom_key(*args, **kwargs):
     def convert_to_tuple(x):
         if isinstance(x, list):
@@ -43,17 +41,11 @@ def gera_resp_gpt(response):
         #st.write(resposta)
     return resposta
 
-def tratar_nome(mensagem):
-    nome = get_nome_mensagens(mensagem)
-    nome = nome.replace(" ", "_")
-    nome = unidecode(nome)
-    nome = re.sub(r'\W+','', nome).lower()
-    return nome
-
 def salvar_mensagens(mensagens):
         if len(mensagens) == 0:
             return []
-        nome = tratar_nome(mensagens)
+        tratamentos = Tratamentos()
+        nome = tratamentos.tratar_nome(mensagens)
         arquivo = {
             'nome': nome,
             'conversa': mensagens
@@ -61,19 +53,12 @@ def salvar_mensagens(mensagens):
         with open(os.path.join(PATH_CONFIGS, f'{nome}.pkl'), "wb") as f:
             pickle.dump(arquivo, f)
 
-def get_nome_mensagens(mensagens):
-    nova_mensagem = ""
-    for mensagem in mensagens:
-        if mensagem['role'] == 'user':
-            nova_mensagem = mensagem['content'][:30]
-            break
-    return nova_mensagem
-
 def ler_mensagens(mensagens):
     
     if len(mensagens) == 1:
         return mensagens
-    nome = tratar_nome(mensagens)
+    tratamentos = Tratamentos()
+    nome = tratamentos.tratar_nome(mensagens)
     with open(os.path.join(PATH_CONFIGS, f'{nome}.pkl'), "rb") as f:
         mensagens = pickle.load(f)
     return mensagens
@@ -173,7 +158,9 @@ def inicializar():
 
 if __name__ == "__main__":
     inicializar()
+    
     retorno = pagina_principal()
     conversas()
     if retorno:
         salvar_mensagens(st.session_state['chat'])
+
