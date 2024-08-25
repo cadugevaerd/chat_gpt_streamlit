@@ -22,7 +22,7 @@ jobs:
     - name: Set up Python 3.12
       uses: actions/setup-python@v3
       with:
-        python-version: ${{ matrix.python_persion }}
+        python-version: ${{ matrix.python_version }}
         
     - name: Install dependencies
       run: |

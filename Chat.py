@@ -1,15 +1,16 @@
 import streamlit as st
-import openai_chat as conecta_gpt
+from openai_chat import conecta_gpt
 import json
 import os
 import os
 import pickle
 from cachetools import cached
 from cachetools.keys import hashkey
-from app.models.tratamentos import Tratamentos
+from unidecode import unidecode
+import re
 
 
-PATH_CONFIGS = os.getcwd() + 'app/database/'
+PATH_CONFIGS = os.getcwd() + 'database/'
 if not os.path.exists(PATH_CONFIGS):
     os.mkdir(PATH_CONFIGS)
 def custom_key(*args, **kwargs):
@@ -35,7 +36,7 @@ def carregar_confs():
 
 def gera_resp_gpt(response):
     with st.chat_message("ai"):
-        response = gpt.conecta_gpt(response)
+        response = conecta_gpt(response)
         resposta = st.write_stream(response)
         resposta = {"role": "assistant", "content": resposta}
         #st.write(resposta)
@@ -44,8 +45,7 @@ def gera_resp_gpt(response):
 def salvar_mensagens(mensagens):
         if len(mensagens) == 0:
             return []
-        tratamentos = Tratamentos()
-        nome = tratamentos.tratar_nome(mensagens)
+        nome = tratar_nome(mensagens)
         arquivo = {
             'nome': nome,
             'conversa': mensagens
@@ -57,8 +57,7 @@ def ler_mensagens(mensagens):
     
     if len(mensagens) == 1:
         return mensagens
-    tratamentos = Tratamentos()
-    nome = tratamentos.tratar_nome(mensagens)
+    nome = tratar_nome(mensagens)
     with open(os.path.join(PATH_CONFIGS, f'{nome}.pkl'), "rb") as f:
         mensagens = pickle.load(f)
     return mensagens
@@ -155,6 +154,21 @@ def conversas():
 def inicializar():
     if 'conversa_atual' not in st.session_state:
         st.session_state['conversa_atual'] = ''
+
+def tratar_nome(mensagem):
+    nome = get_nome_mensagens(mensagem)
+    nome = nome.replace(" ", "_")
+    nome = unidecode(nome)
+    nome = re.sub(r'\W+','', nome).lower()
+    return nome
+
+def get_nome_mensagens(mensagens):
+    nova_mensagem = ""
+    for mensagem in mensagens:
+        if mensagem['role'] == 'user':
+            nova_mensagem = mensagem['content'][:30]
+            break
+    return nova_mensagem
 
 if __name__ == "__main__":
     inicializar()
