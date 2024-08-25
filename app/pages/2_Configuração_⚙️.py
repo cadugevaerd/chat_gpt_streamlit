@@ -17,13 +17,13 @@ def coleta_keys():
 
 def gpt_model():
     st.markdown("## Escolha o modelo GPT:")
-    response = st.selectbox("",["GPT-3.5","GPT-4o","GPT-4"],index=0)
+    response = st.selectbox("",["GPT-3.5","GPT-4o-mini","GPT-4o"],index=1)
     if response == "GPT-3.5":
         st.session_state["openai_model"] = "gpt-3.5-turbo-0125"
-    elif response == "GPT-4o":
-        st.session_state["openai_model"] = "gpt-4o"
+    elif response == "GPT-4o-mini":
+        st.session_state["openai_model"] = "gpt-4o-mini"
     else:
-        st.session_state["openai_model"] = "gpt-4-turbo"
+        st.session_state["openai_model"] = "gpt-4o"
 
 if __name__ == "__main__":
     st.title("⚙️ Configurações GPT")
