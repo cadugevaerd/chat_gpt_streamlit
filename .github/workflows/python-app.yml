@@ -5,7 +5,7 @@ name: Python app
 
 on:
   push:
-    branches: [ "testes" ]
+    branches: [ "main" ]
 permissions:
   contents: read
 
