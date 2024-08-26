@@ -33,6 +33,7 @@ jobs:
     - name: Test with pytest
       run: |
         pytest -v
+        
   docker:
     needs: tests
     uses: ./.github/workflows/Docker.yml
