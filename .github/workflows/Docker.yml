@@ -3,6 +3,9 @@ name: Build_docker
 on:
   workflow_call:
 
+env:
+  ACTIONS_STEP_DEBUG: true
+    
 jobs:
   docker:
     runs-on: ubuntu-latest
