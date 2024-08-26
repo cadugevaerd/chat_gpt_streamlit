@@ -33,6 +33,6 @@ jobs:
         # Push is a shorthand for --output=type=registry
         push: true
         # Generate SBOM attestation for the build (shorthand for --attest=type=sbom)
-        tags: ${{ github.id }}
+        tags: cadugevaerd/chat-gpt:latest
               
             
