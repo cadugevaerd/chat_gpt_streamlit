@@ -1,0 +1,15 @@
+
+
+name: Build_docker
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ '*' ]
+  
+permissions:
+  contents: read
+
+jobs:
+  
